@@ -1,39 +1,70 @@
-Using Zinc Externally
-----------------------
+# Using Zinc Externally with a Teensy 3.1 or 3.2
 
 This project is an example of how you can setup an external project
-using zinc to target any number of the micros supported by Zinc.  The
-actual example used here is one taken from the Zinc examples, but with
-this infrastructure in place, you can create whatever you want.
+using zinc to target the Teensy.  The actual example used here is one
+taken from the Zinc examples, but with this infrastructure in place,
+you can create whatever you want.
 
-Building the Example
---------------------
+## Pre-requisites
+
+### OS X
+
+* [Install rustup](https://www.rustup.rs)
+  * `rustup update nightly-2016-05-12`
+  * `rustup override set nightly-2016-05-12`
+* Install `arm-none-eabi` gcc suite (for cortex-m4)
+  * `brew cask install gcc-arm-embedded`
+* Setup the `thumbv7em-none-eabi` target
+  * `cat <<EOC >> ~/.cargo/config
+[target.thumbv7em-none-eabi]
+linker = "arm-none-eabi-gcc"
+ar = "arm-none-eabi-ar"
+EOC
+`
+* Install the [Teensy Loader CLI](https://www.pjrc.com/teensy/loader_cli.html)
+  * `brew install -dv --HEAD teensy_loader_cli`
+
+## Building the Example
 
 The code can be built with cargo.
 
 ```
-$ cargo build --release --target=thumbv7m-none-eabi
+$ cargo build --release --target=thumbv7em-none-eabi
 ```
 
 This will generate an object file, to turn this into a bin file or hex
 file you will need to run objdump on the resultant binary.  E.g.
 
 ```
-$ objdump -O binary ./target/thumbv7m-none-eabi/release/blink blink.bin
+$ objdump -O ihex ./target/thumbv7em-none-eabi/release/blink blink.hex
 ```
 
 Since you are like to need to type this quite frequently, you may want
 to create a [Makefile like this one](Makefile) to reduce the number
 of commands you need to type.
 
-Creating Your Own Poject Using Zinc
------------------------------------
+### Flashing the Teensy
+
+```
+$ teensy_loader_cli -s --mcu=mk20dx256 -v ./target/thumbv7em-none-eabi/release/blink.hex
+Teensy Loader, Command Line, Version 2.0
+Read "target/thumbv7em-none-eabi/release/blink.hex": 3236 bytes, 1.2% usage
+Soft reboot is not implemented for OSX
+Waiting for Teensy device...
+ (hint: press the reset button)
+Found HalfKay Bootloader
+Read "target/thumbv7em-none-eabi/release/blink.hex": 3236 bytes, 1.2% usage
+Programming....
+Booting
+```
+
+## Creating Your Own Poject Using Zinc
 
 ### Step 1: Create a new rust project
 
 ```
-$ rust new --bin --vcs git rust-lpc1768-blink
-$ cd rust-lpc1768-blink
+$ rust new --bin --vcs git rust-teensy3-blink
+$ cd rust-teensy-blink
 ```
 
 ### Step 2: Set up your Cargo.toml
@@ -43,28 +74,32 @@ with information that makes sense for your MCU, binary, etc.
 
 ```toml
 [package]
-name = "rust-lpc1768-blink"
+name = "rust-teensy3-blink"
 version = "0.1.0"
-authors = ["Paul Osborne <osbpau@gmail.com>"]
+authors = [YOU, "Geoff Cant <nem@erlang.geek.nz>", "Paul Osborne <osbpau@gmail.com>"]
 
 [dependencies.zinc]
-git = "https://github.com/hackndev/zinc.git"
-features = ["mcu_lpc17xx"]
+git = "https://github.com/Gyscos/zinc.git"
+branch = "crazy"
+features = ["mcu_k20"]
 
 [dependencies.macro_platformtree]
-git = "https://github.com/hackndev/zinc.git"
+git = "https://github.com/Gyscos/zinc.git"
+branch = "crazy"
 path = "macro_platformtree"
 
 [dependencies.ioreg]
-git = "https://github.com/hackndev/zinc.git"
+git = "https://github.com/Gyscos/zinc.git"
+branch = "crazy"
 path = "ioreg"
 
 [dependencies.platformtree]
-git = "https://github.com/hackndev/zinc.git"
+git = "https://github.com/Gyscos/zinc.git"
+branch = "crazy"
 path = "platformtree"
 
-[dependencies.core]
-git = "https://github.com/hackndev/rust-libcore"
+[dependencies.rust-libcore]
+version = "*"
 
 [[bin]]
 name = "blink"
@@ -74,7 +109,7 @@ path = "blink.rs"
 ### Step 3: Grab a target specification
 
 Grab a suitable target specification from those available in the root
-of the Zinc repository.
+of the Zinc repository (`thumbv7em-none-eabi.json` for the Teensy 3.1 and 3.2).
 
 ### Step 4: Tell rust about your toolchain
 
