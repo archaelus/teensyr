@@ -1,57 +1,53 @@
-#![feature(plugin, start, core_intrinsics)]
+#![feature(start, core_intrinsics)]
 #![no_std]
-#![plugin(macro_platformtree)]
 
 extern crate zinc;
 
-platformtree!(
-  lpc17xx@mcu {
-    clock {
-      source = "main-oscillator";
-      source_frequency = 12_000_000;
-      pll {
-        m = 50;
-        n = 3;
-        divisor = 4;
-      }
-    }
+use core::intrinsics::volatile_load;
 
-    timer {
-      timer@1 {
-        counter = 25;
-        divisor = 4;
-      }
-    }
+use core::option::Option::Some;
+use zinc::hal::k20::{pin, watchdog};
+use zinc::hal::pin::Gpio;
+use zinc::hal::cortex_m4::systick;
+use zinc::util::support::wfi;
 
-    gpio {
-      1 {
-        led1@18 { direction = "out"; }
-        led2@20 { direction = "out"; }
-      }
-    }
+static mut i: u32 = 0;
+static mut global_on: u32 = 0;
+
+#[allow(dead_code)]
+#[no_mangle]
+pub unsafe extern fn isr_systick() {
+  i += 1;
+  if i > 100 {
+    i = 0;
+    global_on = !global_on;
   }
+}
 
-  os {
-    single_task {
-      loop = "run";
-      args {
-        timer = &timer;
-        led1 = &led1;
-        led2 = &led2;
-      }
+pub fn main() {
+  zinc::hal::mem_init::init_stack();
+  zinc::hal::mem_init::init_data();
+  watchdog::init(watchdog::State::Disabled);
+
+  // Pins for Teensy 3.1 (http://www.pjrc.com/)
+  let led1 = pin::Pin::new(pin::Port::PortC, 5, pin::Function::Gpio, Some(zinc::hal::pin::Out));
+
+  systick::setup(systick::ten_ms().unwrap_or(480000));
+  systick::enable();
+  systick::enable_irq();
+
+  loop {
+    let on: bool = unsafe { volatile_load(&global_on as *const u32) == 0 };
+    match on {
+      true  => led1.set_high(),
+      false => led1.set_low(),
     }
+    wfi();
   }
-);
+}
 
-fn run(args: &pt::run_args) {
-  use zinc::hal::pin::Gpio;
-  use zinc::hal::timer::Timer;
-
-  args.led1.set_high();
-  args.led2.set_low();
-  args.timer.wait(1);
-
-  args.led1.set_low();
-  args.led2.set_high();
-  args.timer.wait(1);
+#[start]
+fn start(_: isize, _: *const *const u8) -> isize {
+  main();
+  0
 }

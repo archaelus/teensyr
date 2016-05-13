@@ -1,30 +1,30 @@
 [package]
-name = "rust-lpc1768-blink"
-version = "0.2.0"
-authors = ["Paul Osborne <osbpau@gmail.com>"]
+name = "teensyr"
+version = "0.1.0"
+authors = ["Geoff Cant <nem@erlang.geek.nz>", "Paul Osborne <osbpau@gmail.com>"]
 
 [dependencies.zinc]
-git = "https://github.com/hackndev/zinc.git"
-branch = "master"
-features = ["mcu_lpc17xx"]
+git = "https://github.com/Gyscos/zinc.git"
+branch = "crazy"
+features = ["mcu_k20"]
 
 [dependencies.macro_platformtree]
-git = "https://github.com/hackndev/zinc.git"
-branch = "master"
+git = "https://github.com/Gyscos/zinc.git"
+branch = "crazy"
 path = "macro_platformtree"
 
 [dependencies.ioreg]
-git = "https://github.com/hackndev/zinc.git"
-branch = "master"
+git = "https://github.com/Gyscos/zinc.git"
+branch = "crazy"
 path = "ioreg"
 
 [dependencies.platformtree]
-git = "https://github.com/hackndev/zinc.git"
-branch = "master"
+git = "https://github.com/Gyscos/zinc.git"
+branch = "crazy"
 path = "platformtree"
 
-[dependencies.core]
-git = "https://github.com/hackndev/rust-libcore"
+[dependencies.rust-libcore]
+version = "*"
 
 [[bin]]
 name = "blink"
