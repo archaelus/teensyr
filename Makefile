@@ -20,7 +20,7 @@ $(OUT_FILE):
 	cargo build --release --target=$(TARGET) --verbose
 
 $(OUT_DIR)/%.hex: $(OUT_DIR)/%
-	$(OBJCOPY) -O binary $< $@
+	$(OBJCOPY) -O ihex $< $@
 
 $(OUT_DIR)/%.lst: $(OUT_DIR)/%
 	$(OBJDUMP) -D $< > $@
@@ -28,5 +28,5 @@ $(OUT_DIR)/%.lst: $(OUT_DIR)/%
 clean:
 	cargo clean
 
-load: build
-	LOADER -s --mcu=mk20dx256 -v 
+load: $(OUT_FILE).hex
+	$(LOADER) -s --mcu=mk20dx256 -v $<
