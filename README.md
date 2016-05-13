@@ -10,19 +10,14 @@ you can create whatever you want.
 ### OS X
 
 * [Install rustup](https://www.rustup.rs)
-  * `rustup update nightly-2016-05-12`
-  * `rustup override set nightly-2016-05-12`
+  * `$ rustup update nightly-2016-05-12`
+  * In your project dir: `$ rustup override set nightly-2016-05-12`
 * Install `arm-none-eabi` gcc suite (for cortex-m4)
-  * `brew cask install gcc-arm-embedded`
+  * `$ brew cask install gcc-arm-embedded`
 * Setup the `thumbv7em-none-eabi` target
-  * `cat <<EOC >> ~/.cargo/config
-[target.thumbv7em-none-eabi]
-linker = "arm-none-eabi-gcc"
-ar = "arm-none-eabi-ar"
-EOC
-`
+  * `$ echo -e '[target.thumbv7em-none-eabi]\nlinker = "arm-none-eabi-gcc"\nar = "arm-none-eabi-ar"\n' >> ~/.cargo/config`
 * Install the [Teensy Loader CLI](https://www.pjrc.com/teensy/loader_cli.html)
-  * `brew install -dv --HEAD teensy_loader_cli`
+  * `$ brew install -dv --HEAD teensy_loader_cli`
 
 ## Building the Example
 
