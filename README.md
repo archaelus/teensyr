@@ -1,7 +1,7 @@
 # Using Zinc Externally with a Teensy 3.1 or 3.2
 
 This project is an example of how you can setup an external project
-using zinc to target the Teensy.  The actual example used here is one
+using [Zinc](https://www.github.com/hackndev/zinc) to target the Teensy.  The actual example used here is one
 taken from the Zinc examples, but with this infrastructure in place,
 you can create whatever you want.
 
