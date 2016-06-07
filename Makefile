@@ -16,7 +16,7 @@ all: build listing
 build: $(OUT_FILE).hex
 listing: $(OUT_FILE).lst
 
-$(OUT_FILE):
+$(OUT_FILE): blink.rs Cargo.toml
 	cargo build --release --target=$(TARGET) --verbose
 
 $(OUT_DIR)/%.hex: $(OUT_DIR)/%
