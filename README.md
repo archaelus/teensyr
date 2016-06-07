@@ -28,10 +28,10 @@ $ cargo build --release --target=thumbv7em-none-eabi
 ```
 
 This will generate an object file, to turn this into a bin file or hex
-file you will need to run objdump on the resultant binary.  E.g.
+file you will need to run objcopy on the resultant binary.  E.g.
 
 ```
-$ objdump -O ihex ./target/thumbv7em-none-eabi/release/blink blink.hex
+$ objcopy -O ihex ./target/thumbv7em-none-eabi/release/blink blink.hex
 ```
 
 Since you are like to need to type this quite frequently, you may want
