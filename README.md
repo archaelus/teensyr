@@ -53,7 +53,7 @@ Programming....
 Booting
 ```
 
-## Creating Your Own Poject Using Zinc
+## Creating Your Own Project Using Zinc
 
 ### Step 1: Create a new rust project
 
